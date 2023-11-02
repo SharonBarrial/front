@@ -1,0 +1,36 @@
+pipeline{
+    agent any
+
+    tools{
+        nodejs "node"
+    }
+
+    stages{
+        stage('Install'){
+            steps{
+                git branch: 'master', url: 'https://github.com/DelfyNoLimits/FrontendTS'
+                dir('FrontendTS-master'){
+                    sh 'npm install'
+                }
+            
+            }
+        }
+        stage('Build'){
+            steps{
+                sh 'npm install'
+            }
+        }
+        stage('Test'){
+            steps{
+                dir('FrontendTS-master'){
+                    sh 'npm test'
+                }
+            }
+        }
+        stage('Deploy'){
+            steps{
+                sh 'npm run deploy'
+            }
+        }
+    }
+}
