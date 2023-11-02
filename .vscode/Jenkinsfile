@@ -11,7 +11,7 @@ pipeline{
         string(name: 'dockerfile', defaultValue: 'Dockerfile', description: 'Nombre del dockerfile')
     }
     stages{
-        stage('Install'){
+        stage('install'){
             steps{
                 git branch: 'master', url: 'https://github.com/SharonBarrial/front.git'
                 dir('front'){
@@ -20,18 +20,31 @@ pipeline{
             
             }
         }
-        stage('Build'){
-            steps{
-                sh 'npm install'
-            }
-        }
-        stage('Test'){
+        stage('test'){
             steps{
                 dir('front'){
                     sh 'npm run test'
                 }
             }
         }
+        stage('Build'){
+            steps {
+               dir('frontend') {
+                  script {
+                    try {
+                      sh 'docker stop ${container_name}'
+                      sh 'docker rm ${container_name}'
+                      sh 'docker rmi ${image_name}:${tag_image}'
+                    } catch (Exception e) {
+                      echo 'Exception occurred: ' + e.toString()
+                    }
+                }
+                sh 'npm run build'
+                sh 'docker build -t ${image_name}:${tag_image} .'
+            }
+          }
+        }
+        
         stage('Deploy'){
             steps{
                 sh 'npm run deploy'
