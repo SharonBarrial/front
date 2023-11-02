@@ -4,7 +4,12 @@ pipeline{
     tools{
         nodejs "node"
     }
-
+    parameters{
+        string(name: 'container_name', defaultValue: 'pagina_web', description: 'Nombre del contenedor')
+        string(name: 'image_name', defaultValue: 'pagina_img', description: 'Nombre de la imagen')
+        string(name: 'image_tag', defaultValue: 'latest', description: 'Tag de la imagen')
+        string(name: 'dockerfile', defaultValue: 'Dockerfile', description: 'Nombre del dockerfile')
+    }
     stages{
         stage('Install'){
             steps{
